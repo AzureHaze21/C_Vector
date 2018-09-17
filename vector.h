@@ -106,7 +106,7 @@
 									\
 	void assign_##Ty(vector_##Ty *_this, size_t count, Ty value)	\
 	{								\
-	        resize_##Ty(_this, count * sizeof(Ty));			\
+	        resize_##Ty(_this, count);				\
 									\
 		for (int i = 0; i < count; i++)				\
 			_this->data[i] = value;				\
