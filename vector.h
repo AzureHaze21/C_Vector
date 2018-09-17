@@ -10,7 +10,7 @@
 #include <stdio.h>
 
 #define VECTOR_DEFAULT_CAPACITY 32
-#define vECTOR_RESIZE_FACTOR 2
+#define VECTOR_RESIZE_FACTOR 2
 
 #define vector_t(Ty) vector_##Ty
 
@@ -149,7 +149,7 @@
 									\
 	const Ty* cend_##Ty(vector_##Ty *_this)				\
 	{								\
-		return (const Ty*)_this->data + _this->size;		\
+		return (const Ty*)(_this->data + _this->size);		\
 	}								\
 									\
 	int empty_##Ty(vector_##Ty *_this)				\
@@ -195,7 +195,7 @@
 									\
 	void clear_##Ty(vector_##Ty *_this)				\
 	{								\
-		_this->size	= 0;					\
+		_this->size = 0;					\
 	}								\
 									\
 	void erase_##Ty(vector_##Ty *_this, Ty *it)			\
@@ -216,13 +216,13 @@
 				_this,					\
 				_this->capacity*VECTOR_RESIZE_FACTOR);	\
 		}							\
-			_this->data[_this->size] = value;		\
+		_this->data[_this->size] = value;			\
 		_this->size++;						\
 	}								\
 									\
 	void pop_back_##Ty(vector_##Ty *_this)				\
 	{								\
-		_this->size--;						\
+		if (_this->size) _this->size--;				\
 	}								\
 									\
 	void resize_##Ty(vector_##Ty *_this, size_t new_size)		\
@@ -234,6 +234,8 @@
 									\
 	void swap_##Ty(vector_##Ty *_this, vector_##Ty *other)		\
 	{								\
+		if (other == NULL) return;				\
+	 								\
 		void *tmp_data	= _this->data;				\
 		size_t tmp_size = _this->size;				\
 		size_t tmp_cap	= _this->capacity;			\
