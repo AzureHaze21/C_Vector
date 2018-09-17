@@ -29,10 +29,10 @@ int main()
     printf(" %d", *it);
   printf(" ]\n");
   
-  printf("[ ");
+  printf("[");
   for (size_t i = 0; i < vec1->size; i++)
     printf(" %d", get(vec1, i));
-  printf(" ]\n");
+  printf("]\n");
   
   Delete(vec1); //release resources
   return 0;
