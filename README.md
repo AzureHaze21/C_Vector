@@ -23,6 +23,11 @@ int main()
   
   erase(vec1, at(vec1, 2)); // [1, 2, 4, 5]
   
+  printf("[ ");
+  for (iterator(vector_t(int)) it = begin(vec1); it != end(vec1); it++)
+    printf(" %d", *it);
+  printf(" ]\n");
+  
   Delete(vec1); //release resources
   return 0;
 }
