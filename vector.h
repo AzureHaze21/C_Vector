@@ -1,10 +1,3 @@
-/*
-** EPITECH PROJECT, 
-** 
-** (c) 2018 by Paul Young (paul.young@epitech.eu)
-** 
-*/
-
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
