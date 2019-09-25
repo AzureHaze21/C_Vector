@@ -1,3 +1,9 @@
+#ifndef _CVECTOR_H_
+#define _CVECTOR_H_
+
+#include <string.h>
+#include <stdlib.h>
+
 #define VECTOR_DEFAULT_CAPACITY 32
 #define VECTOR_RESIZE_FACTOR 2
 
@@ -277,30 +283,32 @@
 
 #define concat(a,b)        a ## b
 
-#define New(_Ty)           concat(new_, _Ty)()
-#define Delete(v)          v->members->_delete(v)
+#define vec_new(_Ty)           concat(new_, _Ty)()
+#define vec_delete(v)          v->members->_delete(v);v=0
 
-#define at(a,b)            a->members->at(a,b)
-#define get(a,b)           *at(a,b)
-#define assign(a,b,c)      a->members->assign(a,b,c)
-#define push_back(a,b)     a->members->push_back(a,b)
-#define pop_back(a)        a->members->push_back(a)
-#define clear(a)           a->members->clear(a)
-#define resize(a,b)        a->members->resize(a,b)
-#define size(a)            a->members->size(a)
-#define capacity(a)        a->members->capacity(a)
-#define max_size(a)        a->members->max_size(a)
-#define reserve(a,b)       a->members->reserve(a,b)
-#define resize(a,b)        a->members->resize(a,b)
-#define front(a)           a->members->front(a)
-#define back(a)            a->members->back(a)	
-#define shrink_to_fit(a)   a->members->shrink_to_fit(a);
-#define empty(a)           a->members->empty(a)
-#define swap(a,b)          a->members->swap(a,b)
-#define erase(a,b)         a->members->erase(a,b)
-#define begin(a)           a->members->begin(a)
-#define cbegin(a)          a->members->cbegin(a)
-#define end(a)             a->members->end(a)
-#define cend(a)            a->members->cend(a)
+#define vec_at(a,b)            a->members->at(a,b)
+#define vec_get(a,b)           *at(a,b)
+#define vec_assign(a,b,c)      a->members->assign(a,b,c)
+#define vec_push_back(a,b)     a->members->push_back(a,b)
+#define vec_pop_back(a)        a->members->push_back(a)
+#define vec_clear(a)           a->members->clear(a)
+#define vec_resize(a,b)        a->members->resize(a,b)
+#define vec_size(a)            a->members->size(a)
+#define vec_capacity(a)        a->members->capacity(a)
+#define vec_max_size(a)        a->members->max_size(a)
+#define vec_reserve(a,b)       a->members->reserve(a,b)
+#define vec_resize(a,b)        a->members->resize(a,b)
+#define vec_front(a)           a->members->front(a)
+#define vec_back(a)            a->members->back(a)	
+#define vec_shrink_to_fit(a)   a->members->shrink_to_fit(a);
+#define vec_empty(a)           a->members->empty(a)
+#define vec_swap(a,b)          a->members->swap(a,b)
+#define vec_erase(a,b)         a->members->erase(a,b)
+#define vec_begin(a)           a->members->begin(a)
+#define vec_cbegin(a)          a->members->cbegin(a)
+#define vec_end(a)             a->members->end(a)
+#define vec_cend(a)            a->members->cend(a)
 
 #define iterator(T)        concat(T, _value_type*)
+
+#endif /* _CVECTOR_H_ */
