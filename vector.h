@@ -309,6 +309,6 @@
 #define vec_end(a)             a->members->end(a)
 #define vec_cend(a)            a->members->cend(a)
 
-#define iterator(T)        concat(T, _value_type*)
+#define vec_iterator(T)        concat(T, _value_type*)
 
 #endif /* _CVECTOR_H_ */
