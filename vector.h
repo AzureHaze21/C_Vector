@@ -1,7 +1,3 @@
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-
 #define VECTOR_DEFAULT_CAPACITY 32
 #define VECTOR_RESIZE_FACTOR 2
 
@@ -16,16 +12,16 @@
 									\
 	struct s_vector_##Ty##_members					\
 	{								\
-	        void	(*assign)(vector_##Ty*, size_t, Ty);		\
-		Ty*	(*at)(vector_##Ty*, size_t);			\
-	        Ty*	(*front)(vector_##Ty*);				\
-	        Ty*	(*back)(vector_##Ty*);				\
-		Ty*	(*data)(vector_##Ty*);				\
-		Ty*	(*begin)(vector_##Ty*);				\
+	    void	(*assign)(vector_##Ty*, size_t, Ty);		\
+		Ty*		(*at)(vector_##Ty*, size_t);		\
+	    Ty*		(*front)(vector_##Ty*);				\
+		Ty*		(*back)(vector_##Ty*);			\
+		Ty*		(*data)(vector_##Ty*);			\
+		Ty*		(*begin)(vector_##Ty*);			\
 		const Ty* (*cbegin)(vector_##Ty*);			\
-		Ty*	(*end)(vector_##Ty*);				\
-	        const Ty* (*cend)(vector_##Ty*);			\
-		int	(*empty)(vector_##Ty*);				\
+		Ty*		(*end)(vector_##Ty*);			\
+		const Ty* (*cend)(vector_##Ty*);			\
+		int		(*empty)(vector_##Ty*);			\
 		size_t	(*size)(vector_##Ty*);				\
 		size_t	(*max_size)(vector_##Ty*);			\
 		void	(*reserve)(vector_##Ty*, size_t);		\
@@ -36,8 +32,8 @@
 		void    (*push_back)(vector_##Ty*, Ty);			\
 		void	(*pop_back)(vector_##Ty*);			\
 		void    (*resize)(vector_##Ty*, size_t);		\
-	        void	(*swap)(vector_##Ty*, vector_##Ty*);		\
-		void	(*delete)(vector_##Ty*);			\
+		void	(*swap)(vector_##Ty*, vector_##Ty*);		\
+		void	(*_delete)(vector_##Ty*);			\
 	};								\
 									\
 	struct s_vector_##Ty##_internal					\
@@ -94,7 +90,7 @@
 		&pop_back_##Ty,						\
 		&resize_##Ty,						\
 		&swap_##Ty,						\
-		&delete_##Ty						\
+		&delete_##Ty				\
 	};								\
 									\
 	void assign_##Ty(vector_##Ty *_this, size_t count, Ty value)	\
@@ -152,7 +148,7 @@
 									\
 	size_t size_##Ty(vector_##Ty *_this)				\
 	{								\
-		return _this->size;					\
+		return _this ? _this->size : 0;				\
 	}								\
 									\
 	size_t max_size_##Ty(vector_##Ty *_this)			\
@@ -162,26 +158,33 @@
 									\
 	void reserve_##Ty(vector_##Ty *_this, size_t new_cap)		\
 	{								\
-		if (_this->capacity < new_cap)				\
+		if (_this && _this->capacity < new_cap)			\
 		{							\
-			_this->data = realloc(_this->data,		\
-					      new_cap*sizeof(Ty));	\
+			Ty *tmp = (Ty*)realloc(				\
+				_this->data, 				\
+				new_cap*sizeof(Ty));			\
+			if (!tmp) 					\
+				return; 				\
+			_this->data = tmp; 				\
 			_this->capacity = new_cap;			\
 		}							\
 	}								\
 									\
 	size_t capacity_##Ty(vector_##Ty *_this)			\
 	{								\
-		return _this->capacity;					\
+		return _this ? _this->capacity : 0;			\
 	}								\
 									\
 	void shrink_to_fit_##Ty(vector_##Ty *_this)			\
 	{								\
-		if (_this->capacity > _this->size)			\
+		if (_this && _this->capacity > _this->size)		\
 		{							\
-			_this->data = realloc(				\
+			Ty *tmp = (Ty*)realloc(				\
 				_this->data,				\
 				_this->size*sizeof(Ty));		\
+			if (!tmp) 					\
+				return; 				\
+			_this->data = tmp; 				\
 			_this->capacity = _this->size;			\
 		}							\
 	}								\
@@ -193,16 +196,20 @@
 									\
 	void erase_##Ty(vector_##Ty *_this, Ty *it)			\
 	{								\
+		if (!_this || !*it) return; 				\
 		if (it >= _this->data &&				\
-		    it < _this->data + (_this->size*sizeof(Ty)))	\
+		    it < _this->data + _this->size)			\
 		{							\
+			memmove(					\
+				it, (Ty*)(it+1),			\
+				_this->data + _this->size - it - 1);  	\
 			_this->size--;					\
-			memmove(it, it+1, _this->size*sizeof(Ty));	\
 		}							\
 	}								\
 									\
 	void push_back_##Ty(vector_##Ty *_this, Ty value)		\
 	{								\
+		if (!_this) return; 					\
 		if (_this->capacity <= _this->size)			\
 		{							\
 			reserve_##Ty(					\
@@ -215,11 +222,12 @@
 									\
 	void pop_back_##Ty(vector_##Ty *_this)				\
 	{								\
-		if (_this->size) _this->size--;				\
+		if (_this && _this->size) _this->size--;		\
 	}								\
 									\
 	void resize_##Ty(vector_##Ty *_this, size_t new_size)		\
 	{								\
+		if (!_this) return; 					\
 		if (_this->capacity < new_size)				\
 			reserve_##Ty(_this, new_size);			\
 		_this->size = new_size;					\
@@ -227,30 +235,32 @@
 									\
 	void swap_##Ty(vector_##Ty *_this, vector_##Ty *other)		\
 	{								\
-		if (other == NULL) return;				\
+		if (!_this || !other) return;				\
 	 								\
-		void *tmp_data	= _this->data;				\
+		void *tmp_data	= (void*)(_this->data);			\
 		size_t tmp_size = _this->size;				\
 		size_t tmp_cap	= _this->capacity;			\
 									\
-		_this->data	= other->data;				\
+		_this->data	= (Ty*)(other->data);			\
 		_this->size	= other->size;				\
 		_this->capacity = other->capacity;			\
 									\
-		other->data	= tmp_data;				\
+		other->data	= (Ty*)tmp_data;			\
 		other->size	= tmp_size;				\
 		other->capacity = tmp_cap;				\
 	}								\
 									\
 	vector_##Ty *new_vector_##Ty()					\
 	{								\
-		vector_##Ty *vec = malloc(sizeof(vector_##Ty));		\
-									\
+		vector_##Ty *vec = 					\
+			(vector_##Ty*)malloc(sizeof(vector_##Ty));	\
+		if (vec == 0)						\
+			return 0; 					\
 		vec->size	= 0;					\
 		vec->capacity	= VECTOR_DEFAULT_CAPACITY;		\
 		vec->members	= &vector_##Ty##_member_functions;	\
-		vec->data	= malloc(VECTOR_DEFAULT_CAPACITY *	\
-					 sizeof(Ty));			\
+		vec->data	= (Ty*)malloc(VECTOR_DEFAULT_CAPACITY *	\
+					sizeof(Ty));			\
 									\
 		return vec;						\
 	}								\
@@ -259,7 +269,8 @@
 	{								\
 		if (_this)						\
 		{							\
-			if (_this->data) free(_this->data);		\
+			if (_this->data) 				\
+				free(_this->data);			\
 			free(_this);					\
 		}							\
 	}								\
@@ -267,7 +278,7 @@
 #define concat(a,b)        a ## b
 
 #define New(_Ty)           concat(new_, _Ty)()
-#define Delete(v)          v->members->delete(v)
+#define Delete(v)          v->members->_delete(v)
 
 #define at(a,b)            a->members->at(a,b)
 #define get(a,b)           *at(a,b)
