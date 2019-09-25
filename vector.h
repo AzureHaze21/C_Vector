@@ -13,15 +13,15 @@
 	struct s_vector_##Ty##_members					\
 	{								\
 	    void	(*assign)(vector_##Ty*, size_t, Ty);		\
-		Ty*		(*at)(vector_##Ty*, size_t);		\
-	    Ty*		(*front)(vector_##Ty*);				\
-		Ty*		(*back)(vector_##Ty*);			\
-		Ty*		(*data)(vector_##Ty*);			\
-		Ty*		(*begin)(vector_##Ty*);			\
+		Ty*	(*at)(vector_##Ty*, size_t);			\
+	    	Ty*	(*front)(vector_##Ty*);				\
+		Ty*	(*back)(vector_##Ty*);				\
+		Ty*	(*data)(vector_##Ty*);				\
+		Ty*	(*begin)(vector_##Ty*);				\
 		const Ty* (*cbegin)(vector_##Ty*);			\
-		Ty*		(*end)(vector_##Ty*);			\
+		Ty*	(*end)(vector_##Ty*);				\
 		const Ty* (*cend)(vector_##Ty*);			\
-		int		(*empty)(vector_##Ty*);			\
+		int	(*empty)(vector_##Ty*);				\
 		size_t	(*size)(vector_##Ty*);				\
 		size_t	(*max_size)(vector_##Ty*);			\
 		void	(*reserve)(vector_##Ty*, size_t);		\
