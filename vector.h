@@ -208,7 +208,7 @@
 		{							\
 			memmove(					\
 				it, (Ty*)(it+1),			\
-				_this->data + _this->size - it - 1);  	\
+				_this->data + _this->size - it);  	\
 			_this->size--;					\
 		}							\
 	}								\
